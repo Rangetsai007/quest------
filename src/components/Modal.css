@@ -1,0 +1,302 @@
+/* 弹窗样式 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background: #fff;
+  min-width: 400px;
+  max-width: 500px;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  animation: slideDown 0.3s ease;
+  font-family: 'Courier New', monospace;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.pixel-box {
+  border: 4px solid #000;
+  box-shadow: 
+    0 0 0 2px #fff,
+    0 0 0 6px #000,
+    0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  border-bottom: 4px solid #000;
+  position: relative;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 24px;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.countdown {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #ff6b00;
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  animation: pulse 1s infinite;
+}
+
+.modal-body {
+  padding: 30px;
+  background: #f5f5f5;
+}
+
+.skill-info {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.skill-name-large {
+  font-size: 28px;
+  font-weight: bold;
+  color: #667eea;
+  margin-bottom: 12px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.skill-name-large.warning {
+  color: #f44336;
+  animation: shake 0.5s infinite;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.skill-description {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.confirm-text {
+  font-size: 18px;
+  color: #333;
+  text-align: center;
+  font-weight: bold;
+}
+
+.opponent-skill,
+.counter-option {
+  margin-bottom: 20px;
+}
+
+.opponent-skill p,
+.counter-option p {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.highlight {
+  color: #4caf50;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.result-message {
+  font-size: 20px;
+  color: #333;
+  text-align: center;
+  margin: 20px 0;
+  line-height: 1.6;
+}
+
+.modal-footer {
+  padding: 20px;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  border-top: 4px solid #000;
+}
+
+/* 按钮样式 */
+.btn {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  border: 3px solid #000;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  box-shadow: 0 4px 0 #000;
+  position: relative;
+  top: 0;
+}
+
+.btn:hover {
+  top: 2px;
+  box-shadow: 0 2px 0 #000;
+}
+
+.btn:active {
+  top: 4px;
+  box-shadow: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #5ec261 0%, #50b657 100%);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #999 0%, #888 100%);
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #aaa 0%, #999 100%);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ff6b00 0%, #e85d00 100%);
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #ff8533 0%, #ff7519 100%);
+}
+
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+/* 反制弹窗特殊样式 */
+.counter-modal {
+  border-color: #ff6b00;
+}
+
+.counter-modal .modal-header {
+  background: linear-gradient(135deg, #ff6b00 0%, #e85d00 100%);
+  animation: header-pulse 1s infinite;
+}
+
+@keyframes header-pulse {
+  0%, 100% {
+    background: linear-gradient(135deg, #ff6b00 0%, #e85d00 100%);
+  }
+  50% {
+    background: linear-gradient(135deg, #ff8533 0%, #ff7519 100%);
+  }
+}
+
+/* 游戏结束弹窗样式 */
+.game-over-modal {
+  min-width: 450px;
+}
+
+/* 选择目标提示 */
+.select-target-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.select-target-hint {
+  pointer-events: all;
+  background: #000;
+  color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  min-width: 300px;
+}
+
+.hint-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #FFD700;
+  margin-bottom: 12px;
+}
+
+.hint-text {
+  font-size: 16px;
+  margin-bottom: 16px;
+  color: #fff;
+}
+
+/* 响应式 */
+@media (max-width: 600px) {
+  .modal-content {
+    min-width: 300px;
+    max-width: 90%;
+  }
+
+  .modal-header h2 {
+    font-size: 20px;
+  }
+
+  .skill-name-large {
+    font-size: 22px;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
