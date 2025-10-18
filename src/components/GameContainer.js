@@ -21,10 +21,11 @@ const GameContainer = () => {
   const [pendingSkill, setPendingSkill] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // 开始游戏
+  // 开始游戏 - 只在组件挂载时执行一次
   useEffect(() => {
     actions.startGame();
-  }, [actions]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // AI回合处理
   useEffect(() => {
@@ -36,6 +37,7 @@ const GameContainer = () => {
     ) {
       handleAITurn();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.currentPlayer, state.gamePhase, isProcessing, modalType]);
 
   // 检查游戏是否结束
@@ -51,98 +53,94 @@ const GameContainer = () => {
   // 更新技能可用性
   useEffect(() => {
     updateSkillAvailability();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.effectStates]);
 
   // AI回合处理
   const handleAITurn = useCallback(async () => {
     setIsProcessing(true);
 
-    // 检查AI是否被冻结
-    if (state.effectStates.frozenPlayer === PLAYER.WHITE) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      actions.switchPlayer();
-      setIsProcessing(false);
-      return;
-    }
-
-    // AI技能决策
-    const skillDecision = decideSkillUsage(
-      { board: state.boardState, currentPlayer: PLAYER.WHITE },
-      state.aiSkillStates
-    );
-
-    if (skillDecision) {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      
-      // 检查玩家是否可以反制
-      const skill = SKILLS[skillDecision.skillId];
-      if (skill.canBeCountered) {
-        const counterSkill = skill.counterSkills.find(
-          (csId) => !state.playerSkillStates[csId].isUsed
-        );
+    try {
+      // 检查AI是否被冻结
+      if (state.effectStates.frozenPlayer === PLAYER.WHITE) {
+        console.log('AI被冻结，检查是否可使用水滴石穿');
         
-        if (counterSkill) {
-          // 显示反制弹窗
-          setModalType(MODAL_TYPE.COUNTER_SKILL);
-          setModalData({
-            opponentSkillId: skillDecision.skillId,
-            counterSkillId: counterSkill,
-          });
-          setPendingSkill({ ...skillDecision, owner: PLAYER.WHITE });
-          setIsProcessing(false);
+        // 被冻结时，检查是否可以使用水滴石穿
+        if (state.aiSkillStates[SKILL_ID.WATER_DROP] && 
+            !state.aiSkillStates[SKILL_ID.WATER_DROP].isUsed &&
+            state.aiSkillStates[SKILL_ID.WATER_DROP].isAvailable) {
+          console.log('AI决定使用水滴石穿解除冻结');
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          actions.useSkill(SKILL_ID.WATER_DROP, PLAYER.WHITE);
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          // 解除冻结后继续正常流程
+        } else {
+          // 没有水滴石穿或已使用，跳过回合
+          console.log('AI被冻结且无法解除，跳过回合');
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          actions.switchPlayer();
           return;
         }
       }
 
-      // 执行AI技能
-      actions.useSkill(skillDecision.skillId, PLAYER.WHITE, skillDecision.target);
-      
-      // 检查是否游戏结束
-      if (state.effectStates.boardBroken) {
-        setIsProcessing(false);
-        return;
+      // AI技能决策
+      const skillDecision = decideSkillUsage(
+        { 
+          board: state.boardState, 
+          currentPlayer: PLAYER.WHITE,
+          effectStates: state.effectStates  // 传递冻结状态
+        },
+        state.aiSkillStates
+      );
+
+      if (skillDecision) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        
+        // 检查玩家是否可以反制
+        const skill = SKILLS[skillDecision.skillId];
+        if (skill.canBeCountered) {
+          const counterSkill = skill.counterSkills.find(
+            (csId) => !state.playerSkillStates[csId].isUsed
+          );
+          
+          if (counterSkill) {
+            // 显示反制弹窗
+            setModalType(MODAL_TYPE.COUNTER_SKILL);
+            setModalData({
+              opponentSkillId: skillDecision.skillId,
+              counterSkillId: counterSkill,
+            });
+            setPendingSkill({ ...skillDecision, owner: PLAYER.WHITE });
+            return;
+          }
+        }
+
+        // 执行AI技能
+        actions.useSkill(skillDecision.skillId, PLAYER.WHITE, skillDecision.target);
+        
+        // 检查是否游戏结束
+        if (state.effectStates.boardBroken) {
+          return;
+        }
       }
-    }
 
-    // AI落子
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    const bestMove = findBestMove(state.boardState, PLAYER.WHITE);
-    
-    if (bestMove) {
-      const [x, y] = bestMove;
-      actions.placePiece(x, y, PLAYER.WHITE);
-    }
+      // AI落子
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      const bestMove = findBestMove(state.boardState, PLAYER.WHITE);
+      
+      if (bestMove) {
+        const [x, y] = bestMove;
+        actions.placePiece(x, y, PLAYER.WHITE);
+      }
 
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    actions.switchPlayer();
-    setIsProcessing(false);
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      actions.switchPlayer();
+    } catch (error) {
+      console.error('AI回合错误:', error);
+    } finally {
+      setIsProcessing(false);
+    }
   }, [state, actions]);
-
-  // 玩家点击棋盘
-  const handleCellClick = useCallback((x, y) => {
-    if (state.gamePhase !== GAME_PHASE.PLAYING) return;
-    if (state.currentPlayer !== PLAYER.BLACK) return;
-    if (state.effectStates.frozenPlayer === PLAYER.BLACK) return;
-    if (isProcessing) return;
-
-    // 如果正在选择技能目标
-    if (state.selectingSkillTarget) {
-      handleSkillTarget(x, y);
-      return;
-    }
-
-    // 普通落子
-    if (state.boardState[x][y] !== PLAYER.NONE) return;
-
-    actions.placePiece(x, y, PLAYER.BLACK);
-    
-    // 检查是否获胜
-    if (state.gamePhase !== GAME_PHASE.ENDED) {
-      setTimeout(() => {
-        actions.switchPlayer();
-      }, 300);
-    }
-  }, [state, actions, isProcessing]);
 
   // 处理技能目标选择
   const handleSkillTarget = useCallback((x, y) => {
@@ -161,14 +159,84 @@ const GameContainer = () => {
     }
   }, [state, actions]);
 
+  // 玩家点击棋盘
+  const handleCellClick = useCallback((x, y) => {
+    console.log('点击棋盘:', { 
+      x, y, 
+      gamePhase: state.gamePhase, 
+      currentPlayer: state.currentPlayer,
+      frozenPlayer: state.effectStates.frozenPlayer,
+      isProcessing,
+      selectingSkillTarget: state.selectingSkillTarget,
+      cellValue: state.boardState[x][y]
+    });
+
+    if (state.gamePhase !== GAME_PHASE.PLAYING) {
+      console.log('游戏未在进行中，当前阶段:', state.gamePhase);
+      return;
+    }
+    if (state.currentPlayer !== PLAYER.BLACK) {
+      console.log('不是玩家回合，当前玩家:', state.currentPlayer);
+      return;
+    }
+    if (state.effectStates.frozenPlayer === PLAYER.BLACK) {
+      console.log('玩家被冻结');
+      return;
+    }
+    if (isProcessing) {
+      console.log('正在处理中');
+      return;
+    }
+
+    // 如果正在选择技能目标
+    if (state.selectingSkillTarget) {
+      handleSkillTarget(x, y);
+      return;
+    }
+
+    // 普通落子
+    if (state.boardState[x][y] !== PLAYER.NONE) {
+      console.log('位置已被占用');
+      return;
+    }
+
+    console.log('执行落子');
+    actions.placePiece(x, y, PLAYER.BLACK);
+    
+    // 检查是否获胜
+    if (state.gamePhase !== GAME_PHASE.ENDED) {
+      setTimeout(() => {
+        actions.switchPlayer();
+      }, 300);
+    }
+  }, [state, actions, isProcessing, handleSkillTarget]);
+
   // 玩家点击技能
   const handlePlayerSkillClick = useCallback((skillId) => {
+    console.log('玩家点击技能:', skillId, '当前冻结状态:', state.effectStates.frozenPlayer === PLAYER.BLACK);
+    
     if (state.currentPlayer !== PLAYER.BLACK) return;
-    if (state.effectStates.frozenPlayer === PLAYER.BLACK) return;
     if (isProcessing) return;
 
     const skillState = state.playerSkillStates[skillId];
     if (skillState.isUsed || !skillState.isAvailable) return;
+
+    // 被冻结时，只允许使用解控技能（水滴石穿）
+    if (state.effectStates.frozenPlayer === PLAYER.BLACK) {
+      if (skillId !== SKILL_ID.WATER_DROP) {
+        console.log('被冻结时只能使用水滴石穿');
+        return;
+      }
+      console.log('允许使用水滴石穿解除冻结');
+    }
+
+    // 静如止水：检查对手是否已被冻结
+    if (skillId === SKILL_ID.STILL_WATER) {
+      if (state.effectStates.frozenPlayer === PLAYER.WHITE) {
+        console.log('对手已被冻结，无法使用静如止水');
+        return;
+      }
+    }
 
     // 需要选择目标的技能
     if (skillId === SKILL_ID.FLY_SAND) {
@@ -326,7 +394,7 @@ const GameContainer = () => {
           skillStates={state.aiSkillStates}
           onSkillClick={() => {}}
           counterSkillId={getCounterSkillId(PLAYER.WHITE)}
-          disabled={true}
+          disabled={isAIFrozen}
           position="left"
         />
 
@@ -347,7 +415,7 @@ const GameContainer = () => {
           skillStates={state.playerSkillStates}
           onSkillClick={handlePlayerSkillClick}
           counterSkillId={getCounterSkillId(PLAYER.BLACK)}
-          disabled={isPlayerFrozen || state.currentPlayer !== PLAYER.BLACK || isProcessing}
+          disabled={isPlayerFrozen}
           position="right"
         />
       </div>

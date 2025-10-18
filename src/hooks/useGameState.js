@@ -17,12 +17,77 @@ const createInitialSkillStates = (owner) => {
       skillId,
       owner,
       isUsed: false,
-      isAvailable: true,
+      isAvailable: getInitialSkillAvailability(skillId),
       canCounter: false,
       usedAtTurn: null,
     };
   });
   return skillStates;
+};
+
+// 获取技能初始可用性
+const getInitialSkillAvailability = (skillId) => {
+  const skill = SKILLS[skillId];
+  // 有条件限制的技能初始不可用
+  if (skill.requireCondition) {
+    return false;
+  }
+  return true;
+};
+
+// 更新技能可用性
+const updateSkillAvailability = (state) => {
+  const newPlayerSkillStates = { ...state.playerSkillStates };
+  const newAiSkillStates = { ...state.aiSkillStates };
+
+  // 遍历所有技能，检查条件
+  Object.keys(SKILLS).forEach((skillId) => {
+    const skill = SKILLS[skillId];
+    
+    // 已使用的技能不可用
+    if (newPlayerSkillStates[skillId].isUsed) {
+      newPlayerSkillStates[skillId].isAvailable = false;
+    } else if (skill.requireCondition) {
+      // 检查条件是否满足
+      newPlayerSkillStates[skillId].isAvailable = checkSkillCondition(skill, state, PLAYER.BLACK);
+    } else {
+      newPlayerSkillStates[skillId].isAvailable = true;
+    }
+
+    if (newAiSkillStates[skillId].isUsed) {
+      newAiSkillStates[skillId].isAvailable = false;
+    } else if (skill.requireCondition) {
+      newAiSkillStates[skillId].isAvailable = checkSkillCondition(skill, state, PLAYER.WHITE);
+    } else {
+      newAiSkillStates[skillId].isAvailable = true;
+    }
+  });
+
+  return {
+    ...state,
+    playerSkillStates: newPlayerSkillStates,
+    aiSkillStates: newAiSkillStates,
+  };
+};
+
+// 检查技能条件
+const checkSkillCondition = (skill, state, owner) => {
+  switch (skill.requireCondition) {
+    case 'PIECE_REMOVED':
+      // 拾金不昧：需要有被移除的棋子
+      return state.effectStates.removedPieces.length > 0;
+    
+    case 'FROZEN':
+      // 水滴石穿：需要自己被冻结
+      return state.effectStates.frozenPlayer === owner;
+    
+    case 'BOARD_BROKEN':
+      // 东山再起：需要棋盘被摔坏
+      return state.effectStates.boardBroken;
+    
+    default:
+      return true;
+  }
 };
 
 // 初始状态
@@ -70,10 +135,12 @@ const ACTIONS = {
 const gameReducer = (state, action) => {
   switch (action.type) {
     case ACTIONS.START_GAME:
+      console.log('游戏开始！初始化状态');
       return {
         ...initialState,
         gamePhase: GAME_PHASE.PLAYING,
         boardState: createEmptyBoard(),
+        currentPlayer: PLAYER.BLACK,
       };
 
     case ACTIONS.PLACE_PIECE: {
@@ -142,6 +209,9 @@ const gameReducer = (state, action) => {
       // 执行技能效果
       newState = applySkillEffect(newState, skillId, owner, target);
 
+      // 更新技能可用性
+      newState = updateSkillAvailability(newState);
+
       return newState;
     }
 
@@ -171,6 +241,9 @@ const gameReducer = (state, action) => {
 
       newState = revertSkillEffect(newState, targetSkillId);
 
+      // 更新技能可用性
+      newState = updateSkillAvailability(newState);
+
       return newState;
     }
 
@@ -185,6 +258,11 @@ const gameReducer = (state, action) => {
 
     case ACTIONS.SWITCH_PLAYER: {
       const nextPlayer = state.currentPlayer === PLAYER.BLACK ? PLAYER.WHITE : PLAYER.BLACK;
+      console.log('SWITCH_PLAYER:', {
+        从: state.currentPlayer === PLAYER.BLACK ? '黑棋(玩家)' : '白棋(AI)',
+        到: nextPlayer === PLAYER.BLACK ? '黑棋(玩家)' : '白棋(AI)',
+        当前冻结: state.effectStates.frozenPlayer === PLAYER.BLACK ? '黑棋(玩家)' : (state.effectStates.frozenPlayer === PLAYER.WHITE ? '白棋(AI)' : '无')
+      });
 
       // 检查下一个玩家是否被冻结
       let newFrozenTurnsLeft = state.effectStates.frozenTurnsLeft;
@@ -192,12 +270,14 @@ const gameReducer = (state, action) => {
 
       if (state.effectStates.frozenPlayer === nextPlayer && newFrozenTurnsLeft > 0) {
         newFrozenTurnsLeft--;
+        console.log(`冻结回合数减少: ${state.effectStates.frozenTurnsLeft} -> ${newFrozenTurnsLeft}`);
         if (newFrozenTurnsLeft === 0) {
           newFrozenPlayer = null;
+          console.log('冻结解除');
         }
       }
 
-      return {
+      let newState = {
         ...state,
         currentPlayer: nextPlayer,
         effectStates: {
@@ -206,10 +286,19 @@ const gameReducer = (state, action) => {
           frozenTurnsLeft: newFrozenTurnsLeft,
         },
       };
+
+      // 更新技能可用性
+      newState = updateSkillAvailability(newState);
+
+      return newState;
     }
 
     case ACTIONS.UPDATE_FROZEN_STATUS: {
       const { player, turnsLeft } = action.payload;
+      console.log('UPDATE_FROZEN_STATUS:', {
+        冻结玩家: player === PLAYER.BLACK ? '黑棋(玩家)' : (player === PLAYER.WHITE ? '白棋(AI)' : '无'),
+        剩余回合: turnsLeft
+      });
       return {
         ...state,
         effectStates: {
@@ -323,6 +412,7 @@ const applySkillEffect = (state, skillId, owner, target) => {
 
     case SKILL_ID.STILL_WATER: {
       const targetPlayer = owner === PLAYER.BLACK ? PLAYER.WHITE : PLAYER.BLACK;
+      console.log(`静如止水技能生效: 冻结玩家`, targetPlayer === PLAYER.BLACK ? '黑棋(玩家)' : '白棋(AI)', '2回合');
       newState = gameReducer(newState, {
         type: ACTIONS.UPDATE_FROZEN_STATUS,
         payload: { player: targetPlayer, turnsLeft: 2 },
@@ -331,6 +421,7 @@ const applySkillEffect = (state, skillId, owner, target) => {
     }
 
     case SKILL_ID.WATER_DROP:
+      console.log('水滴石穿技能生效: 解除冻结');
       newState = gameReducer(newState, {
         type: ACTIONS.UPDATE_FROZEN_STATUS,
         payload: { player: null, turnsLeft: 0 },
@@ -374,6 +465,14 @@ const revertSkillEffect = (state, skillId) => {
           payload: { x: lastRemoved.x, y: lastRemoved.y, player: lastRemoved.player },
         });
       }
+      break;
+
+    case SKILL_ID.STILL_WATER:
+      // 水滴石穿解除静如止水（注：现在不会被反制，只能主动解除）
+      newState = gameReducer(newState, {
+        type: ACTIONS.UPDATE_FROZEN_STATUS,
+        payload: { player: null, turnsLeft: 0 },
+      });
       break;
 
     case SKILL_ID.MOUNTAIN_POWER:

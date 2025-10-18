@@ -114,8 +114,16 @@ export const hasMultipleAliveThree = (board, player) => {
  * @returns {Object|null} 技能使用决策 {skillId, target} 或 null
  */
 export const decideSkillUsage = (gameState, skillStates) => {
-  const { board, currentPlayer } = gameState;
+  const { board, currentPlayer, effectStates } = gameState;
   const opponent = currentPlayer === PLAYER.BLACK ? PLAYER.WHITE : PLAYER.BLACK;
+
+  // 检查对手是否已经被冻结
+  const isOpponentFrozen = effectStates && effectStates.frozenPlayer === opponent;
+  console.log('AI技能决策:', {
+    当前玩家: currentPlayer === PLAYER.BLACK ? '黑棋' : '白棋',
+    对手: opponent === PLAYER.BLACK ? '黑棋(玩家)' : '白棋(AI)',
+    对手被冻结: isOpponentFrozen
+  });
 
   // 检查对手是否即将获胜
   const opponentWinMove = findAliveFour(board, opponent);
@@ -133,8 +141,9 @@ export const decideSkillUsage = (gameState, skillStates) => {
       }
     }
 
-    // 使用静如止水冻结对手
-    if (skillStates[SKILL_ID.STILL_WATER] && !skillStates[SKILL_ID.STILL_WATER].isUsed) {
+    // 使用静如止水冻结对手（仅当对手未被冻结时）
+    if (!isOpponentFrozen && skillStates[SKILL_ID.STILL_WATER] && !skillStates[SKILL_ID.STILL_WATER].isUsed) {
+      console.log('AI决定使用静如止水');
       return {
         skillId: SKILL_ID.STILL_WATER,
         target: null,
@@ -150,9 +159,10 @@ export const decideSkillUsage = (gameState, skillStates) => {
     }
   }
 
-  // 检查对手是否有多个活三
-  if (hasMultipleAliveThree(board, opponent)) {
+  // 检查对手是否有多个活三（仅当对手未被冻结时）
+  if (!isOpponentFrozen && hasMultipleAliveThree(board, opponent)) {
     if (skillStates[SKILL_ID.STILL_WATER] && !skillStates[SKILL_ID.STILL_WATER].isUsed) {
+      console.log('AI决定使用静如止水（对手有多个活三）');
       return {
         skillId: SKILL_ID.STILL_WATER,
         target: null,

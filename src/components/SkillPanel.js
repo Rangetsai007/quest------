@@ -32,6 +32,9 @@ const SkillPanel = ({
         {skillIds.map((skillId) => {
           const skillState = skillStates[skillId];
           const canCounter = counterSkillId === skillId;
+          
+          // 被冻结时，除了解控技能（水滴石穿）外，其他技能不可点击
+          const isSkillDisabled = disabled && skillId !== SKILL_ID.WATER_DROP;
 
           return (
             <SkillCard
@@ -40,7 +43,7 @@ const SkillPanel = ({
               skillState={skillState}
               onClick={onSkillClick}
               canCounter={canCounter}
-              disabled={disabled}
+              disabled={isSkillDisabled}
             />
           );
         })}

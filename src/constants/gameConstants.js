@@ -89,8 +89,7 @@ export const SKILLS = {
     description: '使对手本回合+下回合无法行动',
     usageCount: 1,
     freezeTurns: 2,
-    canBeCountered: true,
-    counterSkills: [SKILL_ID.WATER_DROP],
+    canBeCountered: false, // 修复：静如止水不能被反制，只能被解除
   },
   [SKILL_ID.WATER_DROP]: {
     id: SKILL_ID.WATER_DROP,
