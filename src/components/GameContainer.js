@@ -14,7 +14,7 @@ import {
 import { findBestMove, decideSkillUsage, decideCounterSkill } from '../utils/aiUtils';
 import './GameContainer.css';
 
-const GameContainer = () => {
+const GameContainer = ({ onBackToWelcome }) => {
   const { state, actions } = useGameState();
   const [modalType, setModalType] = useState(null);
   const [modalData, setModalData] = useState(null);
@@ -429,7 +429,7 @@ const GameContainer = () => {
         onCounterSkill={handleCounterSkill}
         onSkipCounter={handleSkipCounter}
         onRestart={handleRestart}
-        onExit={null}
+        onExit={onBackToWelcome}
       />
     </div>
   );

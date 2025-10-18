@@ -1,19 +1,20 @@
-/* 弹窗样式 */
+/* 弹窗样式 - Apple Design */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(20px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 2000;
-  animation: fadeIn 0.3s ease;
+  animation: overlayFadeIn var(--transition-slow) ease-out;
 }
 
-@keyframes fadeIn {
+@keyframes overlayFadeIn {
   from {
     opacity: 0;
   }
@@ -22,117 +23,108 @@
   }
 }
 
+/* 弹窗内容 */
 .modal-content {
-  background: #fff;
+  background: var(--color-surface);
   min-width: 400px;
-  max-width: 500px;
-  border-radius: 8px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  animation: slideDown 0.3s ease;
-  font-family: 'Courier New', monospace;
+  max-width: 480px;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  animation: modalSlideUp var(--transition-slow) var(--transition-ease-out);
+  font-family: var(--font-family);
+  overflow: hidden;
 }
 
-@keyframes slideDown {
+@keyframes modalSlideUp {
   from {
-    transform: translateY(-50px);
+    transform: scale(0.9);
     opacity: 0;
   }
   to {
-    transform: translateY(0);
+    transform: scale(1);
     opacity: 1;
   }
 }
 
-.pixel-box {
-  border: 4px solid #000;
-  box-shadow: 
-    0 0 0 2px #fff,
-    0 0 0 6px #000,
-    0 8px 32px rgba(0, 0, 0, 0.5);
-}
-
+/* 弹窗头部 */
 .modal-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
-  border-bottom: 4px solid #000;
+  padding: 24px 32px;
   position: relative;
+  border-bottom: 1px solid var(--color-divider);
 }
 
 .modal-header h2 {
   margin: 0;
-  color: #fff;
+  color: var(--color-text-primary);
   font-size: 24px;
+  font-weight: 600;
   text-align: center;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
+/* 倒计时 */
 .countdown {
   position: absolute;
   top: 20px;
-  right: 20px;
-  background: #ff6b00;
-  color: #fff;
-  width: 40px;
-  height: 40px;
+  right: 24px;
+  background: var(--color-warning);
+  color: var(--color-surface);
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  font-weight: bold;
-  border: 2px solid #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  animation: pulse 1s infinite;
+  font-size: 16px;
+  font-weight: 600;
+  animation: countdownPulse 1s ease-in-out infinite;
 }
 
+@keyframes countdownPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* 弹窗主体 */
 .modal-body {
-  padding: 30px;
-  background: #f5f5f5;
+  padding: 32px;
 }
 
+/* 技能信息 */
 .skill-info {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .skill-name-large {
-  font-size: 28px;
-  font-weight: bold;
-  color: #667eea;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-primary);
   margin-bottom: 12px;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .skill-name-large.warning {
-  color: #f44336;
-  animation: shake 0.5s infinite;
-}
-
-@keyframes shake {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-5px);
-  }
-  75% {
-    transform: translateX(5px);
-  }
+  color: var(--color-danger);
 }
 
 .skill-description {
-  font-size: 16px;
-  color: #666;
-  line-height: 1.6;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
 }
 
+/* 确认文本 */
 .confirm-text {
-  font-size: 18px;
-  color: #333;
+  font-size: 16px;
+  color: var(--color-text-primary);
   text-align: center;
-  font-weight: bold;
+  line-height: 1.5;
 }
 
+/* 对手技能和反制选项 */
 .opponent-skill,
 .counter-option {
   margin-bottom: 20px;
@@ -141,162 +133,193 @@
 .opponent-skill p,
 .counter-option p {
   font-size: 16px;
-  color: #333;
+  color: var(--color-text-primary);
   margin-bottom: 10px;
   text-align: center;
 }
 
 .highlight {
-  color: #4caf50;
-  font-weight: bold;
+  color: var(--color-success);
+  font-weight: 600;
   font-size: 18px;
 }
 
+/* 结果消息 */
 .result-message {
   font-size: 20px;
-  color: #333;
+  color: var(--color-text-primary);
   text-align: center;
-  margin: 20px 0;
+  margin: 24px 0;
   line-height: 1.6;
 }
 
+/* 弹窗底部 */
 .modal-footer {
-  padding: 20px;
-  background: #fff;
+  padding: 20px 32px 32px;
   display: flex;
   justify-content: center;
-  gap: 16px;
-  border-top: 4px solid #000;
+  gap: 12px;
 }
 
 /* 按钮样式 */
 .btn {
-  padding: 12px 24px;
+  padding: 12px 32px;
   font-size: 16px;
-  font-weight: bold;
-  border: 3px solid #000;
-  border-radius: 4px;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: 'Courier New', monospace;
-  text-transform: uppercase;
-  box-shadow: 0 4px 0 #000;
-  position: relative;
-  top: 0;
+  transition: all var(--transition-normal) ease;
+  font-family: var(--font-family);
+  min-width: 120px;
 }
 
 .btn:hover {
-  top: 2px;
-  box-shadow: 0 2px 0 #000;
+  transform: scale(0.98);
 }
 
 .btn:active {
-  top: 4px;
-  box-shadow: none;
+  transform: scale(0.96);
 }
 
+.btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* 主要按钮 */
 .btn-primary {
-  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-  color: #fff;
+  background: var(--color-primary);
+  color: var(--color-surface);
+  box-shadow: var(--shadow-primary);
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #5ec261 0%, #50b657 100%);
+  background: var(--color-primary-hover);
 }
 
+/* 次要按钮 */
 .btn-secondary {
-  background: linear-gradient(135deg, #999 0%, #888 100%);
-  color: #fff;
+  background: transparent;
+  color: var(--color-primary);
 }
 
 .btn-secondary:hover {
-  background: linear-gradient(135deg, #aaa 0%, #999 100%);
+  background: rgba(0, 122, 255, 0.1);
 }
 
+/* 危险按钮 */
 .btn-danger {
-  background: linear-gradient(135deg, #ff6b00 0%, #e85d00 100%);
-  color: #fff;
+  background: var(--color-warning);
+  color: var(--color-surface);
 }
 
 .btn-danger:hover {
-  background: linear-gradient(135deg, #ff8533 0%, #ff7519 100%);
+  background: #FF8C00;
 }
 
+/* 成功按钮 */
+.btn-success {
+  background: var(--color-success);
+  color: var(--color-surface);
+}
+
+.btn-success:hover {
+  background: var(--color-success-hover);
+}
+
+/* 小按钮 */
 .btn-sm {
   padding: 8px 16px;
   font-size: 14px;
+  min-width: 80px;
 }
 
 /* 反制弹窗特殊样式 */
-.counter-modal {
-  border-color: #ff6b00;
-}
-
 .counter-modal .modal-header {
-  background: linear-gradient(135deg, #ff6b00 0%, #e85d00 100%);
-  animation: header-pulse 1s infinite;
+  border-bottom-color: var(--color-warning);
 }
 
-@keyframes header-pulse {
-  0%, 100% {
-    background: linear-gradient(135deg, #ff6b00 0%, #e85d00 100%);
-  }
-  50% {
-    background: linear-gradient(135deg, #ff8533 0%, #ff7519 100%);
-  }
+.counter-modal .modal-header h2 {
+  color: var(--color-warning);
 }
 
-/* 游戏结束弹窗样式 */
+/* 游戏结束弹窗 */
 .game-over-modal {
   min-width: 450px;
 }
 
+.game-over-modal .result-message {
+  font-size: 24px;
+  font-weight: 600;
+}
+
 /* 选择目标提示 */
 .select-target-overlay {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.3);
   pointer-events: none;
 }
 
 .select-target-hint {
   pointer-events: all;
-  background: #000;
-  color: #fff;
-  padding: 20px;
-  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  padding: 32px;
+  border-radius: var(--radius-xl);
   text-align: center;
-  min-width: 300px;
+  min-width: 320px;
+  box-shadow: var(--shadow-xl);
 }
 
 .hint-title {
   font-size: 20px;
-  font-weight: bold;
-  color: #FFD700;
+  font-weight: 600;
+  color: var(--color-text-primary);
   margin-bottom: 12px;
 }
 
 .hint-text {
   font-size: 16px;
-  margin-bottom: 16px;
-  color: #fff;
+  margin-bottom: 20px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
 }
 
 /* 响应式 */
 @media (max-width: 600px) {
   .modal-content {
-    min-width: 300px;
-    max-width: 90%;
+    min-width: 90vw;
+    max-width: 90vw;
+  }
+
+  .modal-header {
+    padding: 20px 24px;
   }
 
   .modal-header h2 {
     font-size: 20px;
   }
 
+  .modal-body {
+    padding: 24px;
+  }
+
+  .modal-footer {
+    padding: 16px 24px 24px;
+  }
+
   .skill-name-large {
-    font-size: 22px;
+    font-size: 20px;
   }
 
   .btn {
-    padding: 10px 20px;
+    padding: 10px 24px;
     font-size: 14px;
+    min-width: 100px;
+  }
+
+  .select-target-hint {
+    min-width: 90vw;
+    padding: 24px;
   }
 }

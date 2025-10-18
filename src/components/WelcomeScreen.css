@@ -1,0 +1,149 @@
+/* 欢迎界面样式 - Apple Design */
+.welcome-screen {
+  min-height: 100vh;
+  background: radial-gradient(circle at center top, var(--color-background-gradient-start) 0%, var(--color-background-gradient-end) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  font-family: var(--font-family);
+}
+
+/* 欢迎卡片 */
+.welcome-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  padding: 48px 64px;
+  max-width: 600px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: welcomeCardAppear 0.6s var(--transition-ease-out) forwards;
+}
+
+@keyframes welcomeCardAppear {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 主标题 */
+.welcome-title {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 24px 0;
+  letter-spacing: -0.5px;
+  opacity: 0;
+  animation: titleFadeIn 0.4s var(--transition-ease-out) 0.2s forwards;
+}
+
+@keyframes titleFadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+/* 游戏描述 */
+.welcome-description {
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  max-width: 480px;
+  margin: 0 auto 40px;
+  opacity: 0;
+  animation: descriptionFadeIn 0.4s var(--transition-ease-out) 0.4s forwards;
+}
+
+@keyframes descriptionFadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+/* 开始游戏按钮 */
+.start-button {
+  background: var(--color-primary);
+  color: var(--color-surface);
+  font-size: 18px;
+  font-weight: 600;
+  padding: 14px 48px;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-primary);
+  transition: all var(--transition-normal) ease;
+  font-family: var(--font-family);
+  opacity: 0;
+  transform: translateY(10px);
+  animation: buttonSlideUp 0.4s var(--transition-ease-out) 0.6s forwards;
+}
+
+@keyframes buttonSlideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.start-button:hover {
+  background: var(--color-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 122, 255, 0.4);
+}
+
+.start-button:active {
+  transform: scale(0.96);
+}
+
+.start-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .welcome-screen {
+    padding: 24px;
+  }
+
+  .welcome-card {
+    padding: 40px 32px;
+  }
+
+  .welcome-title {
+    font-size: 34px;
+  }
+
+  .welcome-description {
+    font-size: 16px;
+    margin-bottom: 32px;
+  }
+
+  .start-button {
+    font-size: 16px;
+    padding: 12px 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .welcome-card {
+    padding: 32px 24px;
+  }
+
+  .welcome-title {
+    font-size: 28px;
+  }
+
+  .welcome-description {
+    font-size: 15px;
+  }
+
+  .start-button {
+    font-size: 15px;
+    padding: 10px 32px;
+  }
+}
