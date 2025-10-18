@@ -1,53 +1,47 @@
-/* 游戏容器样式 */
+/* 游戏容器样式 - Apple Design */
 .game-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: radial-gradient(circle at center top, var(--color-background-gradient-start) 0%, var(--color-background-gradient-end) 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
-  font-family: 'Courier New', monospace;
+  padding: 32px;
+  font-family: var(--font-family);
+  opacity: 0;
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+/* 游戏标题区 */
 .game-title {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 24px;
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: slideDown 0.4s ease-out 0.1s forwards;
+}
+
+@keyframes slideDown {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .game-title h1 {
-  font-size: 48px;
-  color: #fff;
-  text-shadow: 
-    3px 3px 0 #000,
-    -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1px 1px 0 #000,
-    4px 4px 8px rgba(0, 0, 0, 0.5);
+  font-size: 34px;
+  font-weight: 600;
+  color: var(--color-text-primary);
   margin: 0 0 16px 0;
-  letter-spacing: 4px;
-  animation: title-glow 2s ease-in-out infinite;
+  letter-spacing: -0.5px;
 }
 
-@keyframes title-glow {
-  0%, 100% {
-    text-shadow: 
-      3px 3px 0 #000,
-      -1px -1px 0 #000,
-      1px -1px 0 #000,
-      -1px 1px 0 #000,
-      4px 4px 8px rgba(0, 0, 0, 0.5);
-  }
-  50% {
-    text-shadow: 
-      3px 3px 0 #000,
-      -1px -1px 0 #000,
-      1px -1px 0 #000,
-      -1px 1px 0 #000,
-      4px 4px 16px rgba(255, 215, 0, 0.8),
-      0 0 20px rgba(255, 215, 0, 0.6);
-  }
-}
-
+/* 游戏状态 */
 .game-status {
   display: flex;
   flex-direction: column;
@@ -56,114 +50,118 @@
 }
 
 .turn-indicator {
-  font-size: 20px;
-  font-weight: bold;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 12px 24px;
-  border-radius: 8px;
-  border: 3px solid #FFD700;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-}
-
-.frozen-notice {
   font-size: 16px;
-  font-weight: bold;
-  color: #64b5f6;
-  background: rgba(0, 0, 0, 0.6);
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: 2px solid #64b5f6;
-  animation: frozen-blink 1s infinite;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  padding: 12px 24px;
+  border-radius: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal) ease;
 }
 
-@keyframes frozen-blink {
+/* 玩家回合强调 */
+.turn-indicator.player-turn {
+  background: var(--color-primary);
+  color: var(--color-surface);
+  box-shadow: var(--shadow-primary);
+}
+
+/* AI回合强调 */
+.turn-indicator.ai-turn {
+  background: var(--color-danger);
+  color: var(--color-surface);
+}
+
+/* 冻结提示 */
+.frozen-notice {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-surface);
+  background: var(--color-warning);
+  padding: 8px 16px;
+  border-radius: 16px;
+  animation: frozenPulse 1s ease-in-out infinite;
+}
+
+@keyframes frozenPulse {
   0%, 100% {
-    opacity: 1;
+    opacity: 0.7;
   }
   50% {
-    opacity: 0.6;
+    opacity: 1;
   }
 }
 
+/* 游戏主区域 */
 .game-main {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  gap: 20px;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
+  gap: 32px;
+  opacity: 0;
+  transform: scale(0.95);
+  animation: scaleIn 0.5s ease-out 0.2s forwards;
+}
+
+@keyframes scaleIn {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* 响应式布局 */
 @media (max-width: 1400px) {
-  .game-title h1 {
-    font-size: 36px;
+  .game-container {
+    padding: 24px;
   }
 
-  .game-main {
-    padding: 20px;
-  }
-}
-
-@media (max-width: 1000px) {
   .game-title h1 {
     font-size: 28px;
   }
 
+  .game-main {
+    gap: 24px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .game-container {
+    padding: 20px;
+  }
+
+  .game-title h1 {
+    font-size: 24px;
+  }
+
   .turn-indicator {
-    font-size: 16px;
+    font-size: 14px;
     padding: 10px 20px;
   }
 
   .game-main {
     flex-direction: column;
     align-items: center;
-  }
-
-  .skill-panel.left,
-  .skill-panel.right {
-    margin: 0 0 20px 0;
-    width: 100%;
-    max-width: 600px;
-    min-height: auto;
-  }
-
-  .skills-container {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
+    gap: 20px;
   }
 }
 
-/* 加载动画 */
-.loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  color: #fff;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.loading::after {
-  content: '...';
-  animation: loading-dots 1.5s infinite;
-}
-
-@keyframes loading-dots {
-  0%, 20% {
-    content: '.';
+@media (max-width: 768px) {
+  .game-container {
+    padding: 16px;
   }
-  40% {
-    content: '..';
+
+  .game-title h1 {
+    font-size: 20px;
   }
-  60%, 100% {
-    content: '...';
+
+  .turn-indicator {
+    font-size: 13px;
+    padding: 8px 16px;
+  }
+
+  .game-main {
+    gap: 16px;
   }
 }

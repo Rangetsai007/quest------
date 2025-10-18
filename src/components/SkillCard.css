@@ -1,131 +1,139 @@
-/* 技能卡片样式 */
+/* 技能卡片样式 - Apple Design */
 .skill-card {
   position: relative;
-  width: 80px;
-  height: 100px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: 3px solid #000;
-  border-radius: 8px;
+  width: 120px;
+  height: 80px;
+  background: var(--color-primary);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal) ease;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 8px;
-  margin: 8px 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  font-family: 'Courier New', monospace;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  font-family: var(--font-family);
 }
 
 .skill-card:hover {
-  transform: translateY(-4px) scale(1.05);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.2);
 }
 
+/* 可用状态 */
 .skill-card.available {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-color: #000;
+  background: var(--color-primary);
 }
 
 .skill-card.available:hover {
-  background: linear-gradient(135deg, #7c8ee5 0%, #8a5bb5 100%);
+  background: var(--color-primary-hover);
 }
 
+/* 不可用状态 */
 .skill-card.unavailable {
-  background: linear-gradient(135deg, #999 0%, #666 100%);
+  background: var(--color-divider);
   opacity: 0.5;
   cursor: not-allowed;
 }
 
+.skill-card.unavailable:hover {
+  transform: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* 已使用状态 */
 .skill-card.used {
-  background: linear-gradient(135deg, #555 0%, #333 100%);
-  opacity: 0.6;
+  background: var(--color-text-secondary);
+  opacity: 0.3;
   cursor: not-allowed;
 }
 
-.skill-card.can-counter {
-  animation: counter-flash 1s infinite;
-  border-color: #ff6b00;
-  box-shadow: 0 0 15px rgba(255, 107, 0, 0.6);
+.skill-card.used:hover {
+  transform: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
+/* 可反制高亮 */
+.skill-card.can-counter {
+  animation: counterFlash 1s ease-in-out infinite;
+  border: 2px solid var(--color-warning);
+  box-shadow: var(--shadow-warning);
+}
+
+@keyframes counterFlash {
+  0%, 100% {
+    box-shadow: 0 0 16px rgba(255, 149, 0, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(255, 149, 0, 0.8);
+  }
+}
+
+/* 禁用状态 */
 .skill-card.disabled {
   pointer-events: none;
   opacity: 0.4;
 }
 
-@keyframes counter-flash {
-  0%, 100% {
-    border-color: #ff6b00;
-    box-shadow: 0 0 15px rgba(255, 107, 0, 0.6);
-  }
-  50% {
-    border-color: #ffa500;
-    box-shadow: 0 0 25px rgba(255, 165, 0, 0.8);
-  }
-}
-
+/* 技能图标 */
 .skill-icon {
-  width: 50px;
-  height: 50px;
-  background: rgba(255, 255, 255, 0.2);
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: bold;
-  color: #fff;
-  margin-bottom: 8px;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  font-size: 24px;
+  color: var(--color-surface);
+  margin-bottom: 4px;
 }
 
+.skill-card.unavailable .skill-icon,
+.skill-card.used .skill-icon {
+  color: var(--color-text-secondary);
+}
+
+/* 技能名称 */
 .skill-name {
   font-size: 12px;
-  color: #fff;
+  font-weight: 500;
+  color: var(--color-surface);
   text-align: center;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  line-height: 1.3;
 }
 
+.skill-card.unavailable .skill-name,
+.skill-card.used .skill-name {
+  color: var(--color-text-secondary);
+}
+
+/* 已使用标记 */
 .used-mark {
   position: absolute;
   top: 4px;
   right: 4px;
-  width: 24px;
-  height: 24px;
-  background: #4caf50;
-  border: 2px solid #fff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  color: #fff;
-  font-weight: bold;
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 2px 6px;
+  border-radius: 8px;
 }
 
+/* 反制标记 */
 .counter-mark {
   position: absolute;
   top: 4px;
   right: 4px;
-  width: 24px;
-  height: 24px;
-  background: #ff6b00;
-  border: 2px solid #fff;
+  width: 20px;
+  height: 20px;
+  background: var(--color-warning);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
-  color: #fff;
-  font-weight: bold;
-  animation: pulse-mark 0.8s infinite;
+  font-size: 12px;
+  color: var(--color-surface);
+  font-weight: 600;
+  animation: pulseMark 0.8s ease-in-out infinite;
 }
 
-@keyframes pulse-mark {
+@keyframes pulseMark {
   0%, 100% {
     transform: scale(1);
   }
@@ -140,17 +148,25 @@
   bottom: 110%;
   left: 50%;
   transform: translateX(-50%);
-  background: #000;
-  color: #fff;
-  padding: 12px;
-  border: 3px solid #fff;
-  border-radius: 4px;
-  min-width: 200px;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  min-width: 220px;
+  max-width: 280px;
   z-index: 1000;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-  font-family: 'Courier New', monospace;
+  box-shadow: var(--shadow-xl);
+  font-family: var(--font-family);
   pointer-events: none;
-  white-space: nowrap;
+  white-space: normal;
+  opacity: 0;
+  animation: tooltipFadeIn var(--transition-normal) ease-out forwards;
+}
+
+@keyframes tooltipFadeIn {
+  to {
+    opacity: 1;
+  }
 }
 
 .skill-tooltip::after {
@@ -160,44 +176,46 @@
   left: 50%;
   transform: translateX(-50%);
   border: 8px solid transparent;
-  border-top-color: #fff;
+  border-top-color: var(--color-surface);
 }
 
 .tooltip-title {
   font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 6px;
-  color: #FFD700;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--color-text-primary);
 }
 
 .tooltip-type {
   font-size: 12px;
-  color: #4ecdc4;
-  margin-bottom: 6px;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+  font-weight: 500;
 }
 
 .tooltip-description {
   font-size: 14px;
-  margin-bottom: 6px;
-  white-space: normal;
+  margin-bottom: 8px;
+  color: var(--color-text-primary);
+  line-height: 1.5;
 }
 
 .tooltip-reason {
   font-size: 12px;
-  color: #ff6b6b;
-  margin-top: 6px;
-  font-style: italic;
+  color: var(--color-danger);
+  margin-top: 8px;
+  font-style: normal;
 }
 
 .tooltip-counter {
   font-size: 12px;
-  color: #ff6b00;
-  margin-top: 6px;
-  font-weight: bold;
-  animation: blink 1s infinite;
+  color: var(--color-warning);
+  margin-top: 8px;
+  font-weight: 600;
+  animation: tooltipBlink 1s ease-in-out infinite;
 }
 
-@keyframes blink {
+@keyframes tooltipBlink {
   0%, 100% {
     opacity: 1;
   }
@@ -209,7 +227,7 @@
 /* 左侧技能栏的提示框在右侧显示 */
 .skill-panel.left .skill-tooltip {
   left: auto;
-  right: -220px;
+  right: -240px;
   transform: none;
   bottom: auto;
   top: 0;
@@ -219,13 +237,13 @@
   left: -8px;
   top: 20px;
   border: 8px solid transparent;
-  border-right-color: #fff;
+  border-right-color: var(--color-surface);
   border-top-color: transparent;
 }
 
 /* 右侧技能栏的提示框在左侧显示 */
 .skill-panel.right .skill-tooltip {
-  left: -220px;
+  left: -240px;
   right: auto;
   transform: none;
   bottom: auto;
@@ -237,6 +255,50 @@
   left: auto;
   top: 20px;
   border: 8px solid transparent;
-  border-left-color: #fff;
+  border-left-color: var(--color-surface);
   border-top-color: transparent;
+}
+
+/* 响应式 */
+@media (max-width: 1400px) {
+  .skill-card {
+    width: 100px;
+    height: 70px;
+  }
+
+  .skill-icon {
+    font-size: 20px;
+  }
+
+  .skill-name {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .skill-card {
+    width: 90px;
+    height: 65px;
+  }
+
+  .skill-tooltip {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 90vw;
+  }
+
+  .skill-tooltip::after {
+    display: none;
+  }
+
+  .skill-panel.left .skill-tooltip,
+  .skill-panel.right .skill-tooltip {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    right: auto;
+    transform: translate(-50%, -50%);
+  }
 }

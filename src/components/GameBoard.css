@@ -1,24 +1,28 @@
-/* 棋盘样式 */
+/* 棋盘样式 - Apple Design */
 .game-board-container {
   position: relative;
-  background-color: #DEB887;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  background-color: var(--color-surface);
+  padding: 32px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 600px;
+  height: 600px;
 }
 
 .board-grid {
   display: block;
-  background-color: #D2B48C;
+  background-color: var(--color-surface);
 }
 
+/* 棋子层 */
 .pieces-layer {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 32px;
+  left: 32px;
   pointer-events: none;
 }
 
+/* 棋盘单元格 */
 .cell {
   position: absolute;
   cursor: pointer;
@@ -26,47 +30,70 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background-color var(--transition-fast) ease;
 }
 
+.cell:hover {
+  background-color: rgba(0, 122, 255, 0.05);
+  border-radius: 50%;
+}
+
+/* 棋子 */
 .piece {
   width: 32px;
   height: 32px;
   border-radius: 50%;
   position: absolute;
-  transition: transform 0.2s ease;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  transition: transform var(--transition-normal) var(--transition-spring);
+  opacity: 0;
+  transform: scale(0) translateY(-10px);
+  animation: pieceAppear var(--transition-normal) var(--transition-spring) forwards;
 }
 
+@keyframes pieceAppear {
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* 黑棋 */
 .piece.black {
-  background: radial-gradient(circle at 30% 30%, #555, #000);
-  border: 1px solid #000;
+  background: var(--color-piece-black);
+  box-shadow: var(--shadow-piece);
 }
 
+/* 白棋 */
 .piece.white {
-  background: radial-gradient(circle at 30% 30%, #fff, #ddd);
-  border: 1px solid #999;
+  background: var(--color-piece-white);
+  border: 1px solid var(--color-piece-white-border);
+  box-shadow: var(--shadow-piece-white);
 }
 
+/* 悬停提示棋子 */
 .piece.hover-piece {
-  opacity: 0.5;
-  box-shadow: none;
+  opacity: 0.4;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
+.piece.hover-piece.black {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.piece.hover-piece.white {
+  border: 1px solid var(--color-text-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 移除指示 */
 .piece.remove-indicator {
-  background: radial-gradient(circle at 30% 30%, #ff6b6b, #c92a2a);
-  border: 2px solid #f03e3e;
+  background: var(--color-danger);
+  border: 2px solid var(--color-danger);
   opacity: 0.7;
+  animation: removeIndicator 0.5s ease-in-out infinite;
 }
 
-.piece.last-move {
-  animation: pulse 1s infinite;
-}
-
-.piece.winning {
-  animation: winning-flash 0.8s infinite;
-}
-
-@keyframes pulse {
+@keyframes removeIndicator {
   0%, 100% {
     transform: scale(1);
   }
@@ -75,26 +102,51 @@
   }
 }
 
-@keyframes winning-flash {
+/* 最后一步标记 */
+.piece.last-move::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 获胜棋子 */
+.piece.winning {
+  box-shadow: var(--shadow-win);
+  animation: winningGlow 1s ease-in-out infinite;
+}
+
+@keyframes winningGlow {
   0%, 100% {
-    box-shadow: 0 0 10px #FFD700, 2px 2px 4px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 12px var(--color-gold);
+    opacity: 0.6;
   }
   50% {
-    box-shadow: 0 0 20px #FFD700, 0 0 30px #FFA500, 2px 2px 4px rgba(0, 0, 0, 0.4);
-  }
-}
-
-.win-line {
-  animation: line-flash 1s infinite;
-  stroke-linecap: round;
-}
-
-@keyframes line-flash {
-  0%, 100% {
+    box-shadow: 0 0 24px var(--color-gold), 0 0 36px rgba(255, 215, 0, 0.6);
     opacity: 1;
   }
-  50% {
+}
+
+/* 获胜连线 */
+.win-line {
+  stroke: var(--color-gold);
+  stroke-width: 4px;
+  stroke-linecap: round;
+  animation: lineFlash 1s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8));
+}
+
+@keyframes lineFlash {
+  0%, 100% {
     opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
   }
 }
 
@@ -102,4 +154,51 @@
 .game-board-container.disabled {
   pointer-events: none;
   opacity: 0.7;
+}
+
+/* 响应式 */
+@media (max-width: 1400px) {
+  .game-board-container {
+    width: 540px;
+    height: 540px;
+    padding: 28px;
+  }
+
+  .pieces-layer {
+    top: 28px;
+    left: 28px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .game-board-container {
+    width: 480px;
+    height: 480px;
+    padding: 24px;
+  }
+
+  .pieces-layer {
+    top: 24px;
+    left: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .game-board-container {
+    width: 90vw;
+    max-width: 400px;
+    height: 90vw;
+    max-height: 400px;
+    padding: 20px;
+  }
+
+  .pieces-layer {
+    top: 20px;
+    left: 20px;
+  }
+
+  .piece {
+    width: 28px;
+    height: 28px;
+  }
 }

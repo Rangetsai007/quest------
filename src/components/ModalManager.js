@@ -120,11 +120,11 @@ export const GameOverModal = ({ winner, onRestart, onExit }) => {
         </div>
         <div className="modal-footer">
           <button className="btn btn-primary" onClick={onRestart}>
-            重新开始
+            再来一局
           </button>
           {onExit && (
             <button className="btn btn-secondary" onClick={onExit}>
-              退出游戏
+              返回首页
             </button>
           )}
         </div>
